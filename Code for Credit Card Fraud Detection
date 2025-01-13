@@ -1,0 +1,95 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.preprocessing import LabelEncoder
+
+
+train_data_path = r"C:\Users\Aswin Deivanayagam\fraudTrain.csv" 
+test_data_path = r"C:\Users\Aswin Deivanayagam\fraudTest.csv"   
+
+
+train_data = pd.read_csv(train_data_path)
+test_data = pd.read_csv(test_data_path)
+
+
+train_data = train_data.dropna()
+test_data = test_data.dropna()
+
+if 'trans_date_trans_time' in train_data.columns:
+    train_data['trans_date_trans_time'] = pd.to_datetime(train_data['trans_date_trans_time'])
+    train_data['Year'] = train_data['trans_date_trans_time'].dt.year
+    train_data['Month'] = train_data['trans_date_trans_time'].dt.month
+    train_data['Day'] = train_data['trans_date_trans_time'].dt.day
+    train_data['Hour'] = train_data['trans_date_trans_time'].dt.hour
+
+if 'trans_date_trans_time' in test_data.columns:
+    test_data['trans_date_trans_time'] = pd.to_datetime(test_data['trans_date_trans_time'])
+    test_data['Year'] = test_data['trans_date_trans_time'].dt.year
+    test_data['Month'] = test_data['trans_date_trans_time'].dt.month
+    test_data['Day'] = test_data['trans_date_trans_time'].dt.day
+    test_data['Hour'] = test_data['trans_date_trans_time'].dt.hour
+
+
+train_data = train_data.drop('trans_date_trans_time', axis=1)
+test_data = test_data.drop('trans_date_trans_time', axis=1)
+
+
+categorical_cols = train_data.select_dtypes(include=['object']).columns
+
+
+label_encoder = LabelEncoder()
+
+
+combined_data = pd.concat([train_data[categorical_cols], test_data[categorical_cols]], axis=0)
+
+
+for col in categorical_cols:
+    label_encoder.fit(combined_data[col])
+    train_data[col] = label_encoder.transform(train_data[col])
+    test_data[col] = label_encoder.transform(test_data[col])
+
+
+X_train = train_data.drop('is_fraud', axis=1) 
+y_train = train_data['is_fraud'] 
+
+X_test = test_data.drop('is_fraud', axis=1) 
+y_test = test_data['is_fraud']  
+
+
+X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
+
+
+logreg_model = LogisticRegression(max_iter=1000)
+logreg_model.fit(X_train, y_train)
+logreg_preds = logreg_model.predict(X_test)
+
+
+print("Logistic Regression Results:")
+print("Accuracy:", accuracy_score(y_test, logreg_preds))
+print("Confusion Matrix:\n", confusion_matrix(y_test, logreg_preds))
+print("Classification Report:\n", classification_report(y_test, logreg_preds))
+
+
+dt_model = DecisionTreeClassifier()
+dt_model.fit(X_train, y_train)
+dt_preds = dt_model.predict(X_test)
+
+
+print("\nDecision Tree Results:")
+print("Accuracy:", accuracy_score(y_test, dt_preds))
+print("Confusion Matrix:\n", confusion_matrix(y_test, dt_preds))
+print("Classification Report:\n", classification_report(y_test, dt_preds))
+
+
+rf_model = RandomForestClassifier()
+rf_model.fit(X_train, y_train)
+rf_preds = rf_model.predict(X_test)
+
+
+print("\nRandom Forest Results:")
+print("Accuracy:", accuracy_score(y_test, rf_preds))
+print("Confusion Matrix:\n", confusion_matrix(y_test, rf_preds))
+print("Classification Report:\n", classification_report(y_test, rf_preds))
