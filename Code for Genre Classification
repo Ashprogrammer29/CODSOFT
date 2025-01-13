@@ -1,0 +1,84 @@
+import pandas as pd
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report
+
+
+nltk.download('punkt')
+nltk.download('stopwords')
+
+
+def parse_data(file_path, is_test=False):
+    data = []
+    with open(file_path, 'r', encoding='utf-8') as file:
+        for line in file:
+            parts = line.strip().split(' ::: ')
+            if len(parts) == 3:  # Only 3 parts if genre is missing
+                title, plot = parts[:2]  # Take the first two elements
+                genre = "unknown" if is_test else parts[2]  # Assign "unknown" for test data
+                data.append((genre, plot))
+            elif len(parts) == 4:  # Regular line with genre
+                _, _, genre, plot = parts
+                data.append((genre, plot))
+    return pd.DataFrame(data, columns=['genre', 'plot'])
+
+
+train_data_path = r"C:\Users\Aswin Deivanayagam\Genre Classification Dataset\train_data.txt"
+test_data_path = r"C:\Users\Aswin Deivanayagam\Genre Classification Dataset\test_data.txt"
+
+
+train_data = parse_data(train_data_path)
+test_data = parse_data(test_data_path, is_test=True)
+
+
+print("Train Data Head:\n", train_data.head())
+print("Test Data Head:\n", test_data.head())
+
+
+stop_words = set(stopwords.words('english'))
+
+
+def preprocess_text(text):
+    tokens = word_tokenize(text.lower())  # Convert to lowercase and tokenize
+    tokens = [word for word in tokens if word.isalnum() and word not in stop_words]
+    return ' '.join(tokens)
+
+
+train_data['cleaned_plot'] = train_data['plot'].apply(preprocess_text)
+test_data['cleaned_plot'] = test_data['plot'].apply(preprocess_text)
+
+
+tfidf = TfidfVectorizer(max_features=5000)
+
+
+X_train = tfidf.fit_transform(train_data['cleaned_plot']).toarray()
+X_test = tfidf.transform(test_data['cleaned_plot']).toarray()
+
+
+y_train = train_data['genre']
+y_test = test_data['genre']
+
+
+classifier = LogisticRegression(max_iter=1000)
+classifier.fit(X_train, y_train)
+
+
+y_pred = classifier.predict(X_test)
+
+# Evaluate the model
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("Classification Report:\n", classification_report(y_test, y_pred))
+
+
+def predict_genre(plot_summary, model):
+    processed_plot = preprocess_text(plot_summary)  # Preprocess the input plot
+    vectorized_plot = tfidf.transform([processed_plot]).toarray()  # Vectorize
+    return model.predict(vectorized_plot)[0]
+
+
+new_plot = "A group of friends go on an adventure to save the world from an alien invasion."
+predicted_genre = predict_genre(new_plot, classifier)
+print("Predicted Genre:", predicted_genre)
