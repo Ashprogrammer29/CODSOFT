@@ -1,7 +1,10 @@
 # 1) Movie Genre Prediction Based on Plot Summaries
----
-#### Overview  
+ 
 A machine-learning model predicts movie genres from plot summaries using NLP techniques. Features are extracted with **TF-IDF** and **word embeddings**, and classifiers like **Naive Bayes**, **Logistic Regression**, and **SVM** categorize movies by genre.  
+
+---
+
+## Project Overview
 
 #### Key Highlights  
 - **Problem**: Predict genres using minimal metadata (plot summaries).  
