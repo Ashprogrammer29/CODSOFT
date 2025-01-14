@@ -1,0 +1,59 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+try:
+    df = pd.read_csv(r"C:\Users\Aswin Deivanayagam\spam.csv", encoding='utf-8')
+except UnicodeDecodeError:
+    print("Failed to read with UTF-8 encoding. Retrying with 'latin1'.")
+    df = pd.read_csv(r"C:\Users\Aswin Deivanayagam\spam.csv", encoding='latin1')
+
+
+print("Dataset preview:")
+print(df.head())
+
+
+df.columns = ['label', 'message'] + list(df.columns[2:])
+df = df[['label', 'message']]  # Keep only relevant columns
+df['label'] = df['label'].map({'ham': 0, 'spam': 1})  # Convert labels to binary (0 for ham, 1 for spam)
+
+
+if df.isnull().sum().any():
+    print("Missing values detected. Removing rows with missing values.")
+    df = df.dropna()
+
+
+df['message'] = df['message'].str.lower() 
+df['message'] = df['message'].str.replace(r'[^\w\s]', '', regex=True)
+df['message'] = df['message'].str.replace(r'\d+', '', regex=True) 
+
+
+X = df['message']  
+y = df['label']   
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
+
+vectorizer = TfidfVectorizer(stop_words='english', max_features=5000)
+X_train_tfidf = vectorizer.fit_transform(X_train)
+X_test_tfidf = vectorizer.transform(X_test)
+
+
+model = MultinomialNB()
+model.fit(X_train_tfidf, y_train)
+
+
+y_pred = model.predict(X_test_tfidf)
+
+
+print("Model Evaluation:")
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
+print("Classification Report:\n", classification_report(y_test, y_pred))
+
+
+sample_message = ["Congratulations! You've won a $1,000 gift card. Click here to claim."]
+sample_tfidf = vectorizer.transform(sample_message)
+sample_pred = model.predict(sample_tfidf)
+print(f"Sample message prediction: {'Spam' if sample_pred[0] == 1 else 'Ham'}")
