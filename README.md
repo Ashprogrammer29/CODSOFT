@@ -1,3 +1,6 @@
+# The 3 projects I did during my internship with CODSOFT are:
+
+
 # 1) Movie Genre Prediction Based on Plot Summaries
  
 A machine-learning model predicts movie genres from plot summaries using NLP techniques. Features are extracted with **TF-IDF** and **word embeddings**, and classifiers like **Naive Bayes**, **Logistic Regression**, and **SVM** categorize movies by genre.  
