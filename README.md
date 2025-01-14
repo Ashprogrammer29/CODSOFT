@@ -1,7 +1,7 @@
 # The 3 projects I did during my internship with CODSOFT are:
 
 
-# 1) Movie Genre Prediction Based on Plot Summaries
+## 1) Movie Genre Prediction Based on Plot Summaries
  
 A machine-learning model predicts movie genres from plot summaries using NLP techniques. Features are extracted with **TF-IDF** and **word embeddings**, and classifiers like **Naive Bayes**, **Logistic Regression**, and **SVM** categorize movies by genre.  
 
@@ -35,7 +35,7 @@ python movie_genre_predictor.py
 - Adding multilingual support.
 - Real-time genre predictions in recommendation systems.
 
-# 2) Fraud Detection Model
+## 2) Fraud Detection Model
 
 This project implements a machine learning-based system for detecting fraudulent transactions in financial datasets. The goal is to classify transactions as either **fraudulent** or **legitimate** using historical data. By applying various machine learning algorithms, this model can help financial institutions detect fraud more effectively and efficiently.
 
@@ -92,7 +92,7 @@ pip install pandas scikit-learn numpy
 This project demonstrates a basic approach to fraud detection using machine learning models. By leveraging the strengths of logistic regression, decision trees, and random forests, we can identify fraudulent transactions with reasonable accuracy. Further optimizations and model tuning could improve the system's performance in real-world scenarios.
 
 
-# 3)SMS Spam Classification
+## 3)SMS Spam Classification
 
 This project is designed to classify SMS messages as either spam or legitimate (ham) using Natural Language Processing (NLP) and machine learning techniques. The model helps identify unwanted or fraudulent messages, making it an effective tool for spam detection.
 
