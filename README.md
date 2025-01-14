@@ -1,5 +1,5 @@
-### 1) Movie Genre Prediction Based on Plot Summaries
-
+# 1) Movie Genre Prediction Based on Plot Summaries
+---
 #### Overview  
 A machine-learning model predicts movie genres from plot summaries using NLP techniques. Features are extracted with **TF-IDF** and **word embeddings**, and classifiers like **Naive Bayes**, **Logistic Regression**, and **SVM** categorize movies by genre.  
 
@@ -29,9 +29,11 @@ python movie_genre_predictor.py
 - Adding multilingual support.
 - Real-time genre predictions in recommendation systems.
 
-### 2) Fraud Detection Model
+# 2) Fraud Detection Model
 
 This project implements a machine learning-based system for detecting fraudulent transactions in financial datasets. The goal is to classify transactions as either **fraudulent** or **legitimate** using historical data. By applying various machine learning algorithms, this model can help financial institutions detect fraud more effectively and efficiently.
+
+---
 
 ## Project Overview
 
